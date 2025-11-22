@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- 手機視窗設定 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="format-detection" content="telephone=no" />
+    <!-- PWA 主題色，和 manifest 裡的 theme_color 一致 -->
+    <meta name="theme-color" content="#1d4ed8" />
+
+    <!-- PWA manifest -->
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- iOS 桌面圖示（如果有這兩個檔案） -->
+    <link rel="apple-touch-icon" href="icon-192.png" />
+
+    <title>水源計算機｜峨眉消防隊</title>
+
+    <!-- Tailwind CDN（會被 sw.js 快取，離線可用） -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              fire: {
+                DEFAULT: '#ef4444',
+                dark: '#b91c1c',
+                soft: '#fee2e2',
+              },
+              water: {
+                DEFAULT: '#3b82f6',
+                dark: '#1d4ed8',
+                soft: '#dbeafe',
+              },
+              safe: {
+                DEFAULT: '#22c55e',
+              }
+            },
+            fontFamily: {
+              sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
+
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      input, select, textarea { font-size: 16px; }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-8px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+    </style>
+
+    <!-- React / Recharts 走 CDN（會被 sw.js 動態快取） -->
+    <script type="importmap">
+    {
+      "imports": {
+        "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+        "recharts": "https://aistudiocdn.com/recharts@^3.4.1",
+        "react/": "https://aistudiocdn.com/react@^19.2.0/",
+        "react": "https://aistudiocdn.com/react@^19.2.0"
+      }
+    }
+    </script>
+
+    <!-- ⚠ 這裡改成相對路徑，不能用 /index.css，不然在 /watercalc/ 底下會找不到 -->
+    <link rel="stylesheet" href="index.css">
+  </head>
+
+  <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
+    <div id="root"></div>
+
+    <!-- 註冊 Service Worker，scope 即為 /watercalc/ -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then((registration) => {
+              console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            })
+            .catch((err) => {
+              console.log('ServiceWorker registration failed: ', err);
+            });
+        });
+      }
+    </script>
+
+    <!-- ⚠ 這裡也改成相對路徑，不能用 /index.tsx -->
+    <script type="module" src="index.tsx"></script>
+  </body>
+</html>
